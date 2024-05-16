@@ -81,10 +81,16 @@ static argus_hnd_t* InitializeDevice(s2pi_slave_t slave)
     status_t status = Argus_Init(device, slave);
     HandleError(status, true, "Argus_Init failed!");
 
+    status = Argus_SetConfigurationDFMMode(device, DFM_MODE_OFF);
+    HandleError(status, true, "Argus_SetConfigurationDFMMode failed!");
+
+    status = Argus_SetConfigurationSmartPowerSaveEnabled(device, false);
+    HandleError(status, true, "Argus_SetConfigurationSmartPowerSaveEnabled failed!");
+
     /* Adjust additional configuration parameters by invoking the dedicated API methods.
      * Note: The maximum frame rate is limited by the amount of data sent via UART.
      *       See #PrintResults function for more information. */
-    status = Argus_SetConfigurationFrameTime(device, 100000); // 0.1 second = 10 Hz
+    status = Argus_SetConfigurationFrameTime(device, 2500); // 0.0025 second = 400 Hz
     HandleError(status, true, "Argus_SetConfigurationFrameTime failed!");
 
     return device;
@@ -163,7 +169,7 @@ static void PrintResults(argus_results_t const * res)
      *       approximately 80 characters per frame at 115200 bps which limits
      *       the max. frame rate of 144 fps:
      *       115200 bps / 10 [bauds-per-byte] / 80 [bytes-per-frame] = 144 fps */
-    print("%4d.%06d s; Range: %5d mm;  Amplitude: %4d LSB;  Quality: %3d;  Status: %d\n",
+    print("%4d.%06d s; Range: %5d mm;  Amplitude: %4d LSB;  Quality: %3d;  Status: %d\n\r",
           res->TimeStamp.sec,
           res->TimeStamp.usec,
           res->Bin.Range / (Q9_22_ONE / 1000),
@@ -208,7 +214,7 @@ void ExampleMain(void)
 #if RUN_HAL_TESTS
     /* Running a sequence of test in order to verify the HAL implementation. */
     status_t status = Argus_VerifyHALImplementation(SPI_SLAVE);
-    HandleError(status, true, "HAL Implementation verification failed on SPI_SLAVE!");
+    HandleError(status, true, "HAL Implementation verification failed on SPI_SLAVE!\n\r");
 #endif // RUN_HAL_TESTS
 
     /* Instantiate and initialize the device handlers. */

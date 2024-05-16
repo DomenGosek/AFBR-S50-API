@@ -55,7 +55,7 @@
  ******************************************************************************/
 
 /*! An error log message via #print function. */
-#define error_log(fmt, ...) print("ERROR: " fmt "\n", ##__VA_ARGS__)
+#define error_log(fmt, ...) print("ERROR: " fmt "\n\r", ##__VA_ARGS__)
 
 /*******************************************************************************
  * Prototypes
@@ -102,23 +102,23 @@ extern uint8_t hamming_decode(uint8_t const * code, uint8_t * data);
 
 status_t Argus_VerifyHALImplementation(s2pi_slave_t spi_slave)
 {
-    print("########################################################\n");
-    print("#   Running HAL Verification Test - " HAL_TEST_VERSION "\n");
-    print("########################################################\n");
-    print("- SPI Slave: %d \n\n", spi_slave);
+    print("########################################################\n\r");
+    print("#   Running HAL Verification Test - " HAL_TEST_VERSION "\n\r");
+    print("########################################################\n\r");
+    print("- SPI Slave: %d \n\n\r", spi_slave);
 
     const status_t status = VerifyHALImplementation(spi_slave);
 
-    print("########################################################\n");
+    print("########################################################\n\r");
     if (status != STATUS_OK)
     {
-        print("#   FAIL: HAL Verification Test finished with error %d!\n", status);
+        print("#   FAIL: HAL Verification Test finished with error %d!\n\r", status);
     }
     else
     {
-        print("#   PASS: HAL Verification Test finished successfully!\n");
+        print("#   PASS: HAL Verification Test finished successfully!\n\r");
     }
-    print("########################################################\n\n");
+    print("########################################################\n\n\r");
 
     return status;
 }
@@ -136,57 +136,57 @@ static status_t VerifyHALImplementation(s2pi_slave_t spi_slave)
 {
     status_t status = STATUS_OK;
 
-    print("1 > Timer Plausibility Test\n");
+    print("1 > Timer Plausibility Test\n\r");
     status = TimerPlausibilityTest();
     if (status != STATUS_OK) return status;
-    print("1 > PASS\n\n");
+    print("1 > PASS\n\n\r");
 
-    print("2 > Timer Wraparound Test\n");
+    print("2 > Timer Wraparound Test\n\r");
     status = TimerWraparoundTest();
     if (status != STATUS_OK) return status;
-    print("2 > PASS\n\n");
+    print("2 > PASS\n\n\r");
 
-    print("3 > SPI Connection Test\n");
+    print("3 > SPI Connection Test\n\r");
     status = SpiConnectionTest(spi_slave);
     if (status != STATUS_OK) return status;
-    print("3 > PASS\n\n");
+    print("3 > PASS\n\n\r");
 
-    print("4 > SPI Maximum Data Length Test\n");
+    print("4 > SPI Maximum Data Length Test\n\r");
     status = SpiMaxLengthTest(spi_slave);
     if (status != STATUS_OK) return status;
-    print("4 > PASS\n\n");
+    print("4 > PASS\n\n\r");
 
-    print("5 > GPIO Interrupt Test\n");
+    print("5 > GPIO Interrupt Test\n\r");
     status = GpioInterruptTest(spi_slave);
     if (status != STATUS_OK) return status;
-    print("5 > PASS\n\n");
+    print("5 > PASS\n\n\r");
 
-    print("6 > GPIO Mode Test\n");
+    print("6 > GPIO Mode Test\n\r");
     status = GpioModeTest(spi_slave);
     if (status != STATUS_OK) return status;
-    print("6 > PASS\n\n");
+    print("6 > PASS\n\n\r");
 
-    print("7 > Lifetime Counter Timer (LTC) Test\n");
+    print("7 > Lifetime Counter Timer (LTC) Test\n\r");
     status = TimerTest(spi_slave);
     if (status != STATUS_OK) return status;
-    print("7 > PASS\n\n");
+    print("7 > PASS\n\n\r");
 
-    print("8 > Periodic Interrupt Timer (PIT) Test\n");
+    print("8 > Periodic Interrupt Timer (PIT) Test\n\r");
     status = PITTest();
     if (status == ERROR_NOT_IMPLEMENTED)
     {
-        print("8 > SKIPPED (PIT is not implemented)\n\n");
+        print("8 > SKIPPED (PIT is not implemented)\n\n\r");
     }
     else
     {
         if (status != STATUS_OK) return status;
-        print("8 > PASS\n\n");
+        print("8 > PASS\n\n\r");
     }
 
-    print("9 > SPI Interrupt Test\n");
+    print("9 > SPI Interrupt Test\n\r");
     status = SpiTransferFromInterruptTest(spi_slave);
     if (status != STATUS_OK) return status;
-    print("9 > PASS\n\n");
+    print("9 > PASS\n\n\r");
 
     return status;
 }
@@ -604,7 +604,7 @@ static status_t SpiMaxLengthTest(s2pi_slave_t slave)
     status = SPITransferSync(slave, data, sizeof(data));
     if (status != STATUS_OK)
     {
-        error_log("SPI maximum data length test failed!");
+        error_log("SPI maximum data length test failed!\n\r");
         return status;
     }
 
@@ -620,7 +620,7 @@ static status_t SpiMaxLengthTest(s2pi_slave_t slave)
     status = SPITransferSync(slave, data, sizeof(data));
     if (status != STATUS_OK)
     {
-        error_log("SPI maximum data length test failed!");
+        error_log("SPI maximum data length test failed!\n\r");
         return status;
     }
 
@@ -632,10 +632,10 @@ static status_t SpiMaxLengthTest(s2pi_slave_t slave)
          || data[j + 2] != (uint8_t)(i + 1)
          || data[j + 3] != (uint8_t)(i * 2))
         {
-            error_log("SPI maximum data length test failed!\n"
-                      "Verification of read data is invalid at byte %d!\n"
-                      " - expected: 0x%02X%02X%02X\n"
-                      " - actual:   0x%02X%02X%02X",
+            error_log("SPI maximum data length test failed!\n\r"
+                      "Verification of read data is invalid at byte %d!\n\r"
+                      " - expected: 0x%02X%02X%02X\n\r"
+                      " - actual:   0x%02X%02X%02X\n\r",
                       i, (uint8_t)i, (uint8_t)(i + 1), (uint8_t)(i * 2),
                       data[j + 1], data[j + 2], data[j + 3]);
             return ERROR_FAIL;
@@ -1241,14 +1241,14 @@ static status_t GpioModeTest(s2pi_slave_t slave)
 
     if (chipID == 0 || module == 0)
     {
-        error_log("GPIO Mode test failed (data verification)!\n"
+        error_log("GPIO Mode test failed (data verification)!\n\r"
                   "Invalid EEPROM data: Module = %d; Chip ID = %d!", module, chipID);
         return ERROR_FAIL;
     }
 
-    print("EEPROM Readout succeeded!\n");
-    print("- Module: %d\n", module);
-    print("- Device ID: %d\n", chipID);
+    print("EEPROM Readout succeeded!\n\r");
+    print("- Module: %d\n\r", module);
+    print("- Device ID: %d\n\r", chipID);
 
     return STATUS_OK;
 }
@@ -1433,7 +1433,7 @@ static status_t TimerTest(s2pi_slave_t slave)
                   "EEPROM Read test returned code: %d", status);
         return status;
     }
-    print("RCOTrim = %d\n", RcoTrim);
+    print("RCOTrim = %d\n\r", RcoTrim);
 
     /* Configure the device with calibrated RCO to 24MHz. */
     status = ConfigureDevice(slave, RcoTrim);
@@ -1452,9 +1452,9 @@ static status_t TimerTest(s2pi_slave_t slave)
     float x2sum = 0;
     float xysum = 0;
 
-    print("+-------+---------+------------+\n");
-    print("| count | samples | elapsed us |\n");
-    print("+-------+---------+------------+\n");
+    print("+-------+---------+------------+\n\r");
+    print("| count | samples | elapsed us |\n\r");
+    print("+-------+---------+------------+\n\r");
     for (uint8_t i = 1; i <= n; ++i)
     {
         ltc_t start;
@@ -1479,14 +1479,14 @@ static status_t TimerTest(s2pi_slave_t slave)
         x2sum += (float) samples * (float) samples;
         xysum += (float) samples * (float) elapsed_usec;
 
-        print("| %5d | %7d | %10d |\n", i, samples, elapsed_usec);
+        print("| %5d | %7d | %10d |\n\r", i, samples, elapsed_usec);
     }
-    print("+-------+---------+------------+\n");
+    print("+-------+---------+------------+\n\r");
 
 
     const float slope = (n * xysum - xsum * ysum) / (n * x2sum - xsum * xsum);
     const float intercept = (ysum * x2sum - xsum * xysum) / (n * x2sum - xsum * xsum);
-    print("Linear Regression: y(x) = %dE-7 sec * x + %dE-7 sec\n",
+    print("Linear Regression: y(x) = %dE-7 sec * x + %dE-7 sec\n\r",
           (int) (10 * slope), (int) (10 * intercept));
 
     /* Check the error of the slope. */
@@ -1598,10 +1598,10 @@ static status_t RunPITTest(uint32_t exp_dt_us, uint32_t n)
     const float t_first_min = (float) exp_dt_us - dt * 5; // the first interval
     /*************************************************************************/
 
-    print("Run PIT Test (w/ %d us interval):\n"
-          " - expected event count: %d\n"
-          " - expected interval: %d us, min: %d us, max: %d us\n"
-          " - expected first event: %d us, min: %d us, max: %d us\n",
+    print("Run PIT Test (w/ %d us interval):\n\r"
+          " - expected event count: %d\n\r"
+          " - expected interval: %d us, min: %d us, max: %d us\n\r"
+          " - expected first event: %d us, min: %d us, max: %d us\n\r",
           exp_dt_us, n, exp_dt_us, (int)min_dt, (int)max_dt,
           exp_dt_us, (int)t_first_min, (int)t_first_max);
 
@@ -1610,7 +1610,7 @@ static status_t RunPITTest(uint32_t exp_dt_us, uint32_t n)
     status_t status = Timer_SetInterval(exp_dt_us, &data);
     if (status != STATUS_OK)
     {
-        error_log("PIT test failed!\n"
+        error_log("PIT test failed!\n\r"
                   "Timer_SetInterval returned status code: %d", status);
         return status;
     }
@@ -1668,27 +1668,27 @@ static status_t RunPITTest(uint32_t exp_dt_us, uint32_t n)
     const uint32_t t_first_us = Time_DiffUSec(&start, &data.t_first);
     const uint32_t t_last_us = Time_DiffUSec(&start, &data.t_last);
 
-    print(" - actual event count: %d\n"
-          " - actual interval: %d us\n"
-          " - actual first event: %d us\n"
-          " - actual last event: %d us\n\n",
+    print(" - actual event count: %d\n\r"
+          " - actual interval: %d us\n\r"
+          " - actual first event: %d us\n\r"
+          " - actual last event: %d us\n\n\r",
           data.n, (int)act_dt_us, t_first_us, t_last_us);
 
     if (status == STATUS_OK && (t_first_us > t_first_max || t_first_us < t_first_min))
     {
-        error_log("PIT test failed!\n"
+        error_log("PIT test failed!\n\r"
                   "The first timer event did not occur after the expected interval!");
         status = ERROR_FAIL;
     }
 
     if (status == STATUS_OK && (act_dt_us > max_dt || act_dt_us < min_dt))
     {
-        error_log("PIT test failed!\n"
+        error_log("PIT test failed!\n\r"
                   "The measured timer interval does not match the expected value!");
         status = ERROR_FAIL;
     }
 
-    print(" - test status: %d\n\n", status);
+    print(" - test status: %d\n\n\r", status);
 
     return status;
 }
@@ -1717,7 +1717,7 @@ static status_t PITTest(void)
     if (status == ERROR_NOT_IMPLEMENTED) return status;
     if  (status != STATUS_OK)
     {
-        error_log("PIT test failed!\n"
+        error_log("PIT test failed!\n\r"
                   "Timer_SetCallback returned status code: %d", status);
         return status;
     }
@@ -1733,9 +1733,9 @@ static status_t PITTest(void)
     status = RunPITTest(1000, 500);
     if (status != STATUS_OK)
     {
-        print("WARNING: PIT test failed for 1000 us interval!\n"
-              "         This is only critical if high frame rates (up to 1000 fps)\n"
-              "         need to be achieved. Otherwise, the error can be safely ignored.\n");
+        print("WARNING: PIT test failed for 1000 us interval!\n\r"
+              "         This is only critical if high frame rates (up to 1000 fps)\n\r"
+              "         need to be achieved. Otherwise, the error can be safely ignored.\n\r");
         status = STATUS_IGNORE; // ignore
     }
 
@@ -1746,9 +1746,9 @@ static status_t PITTest(void)
         status = RunPITTest(333, 500);
         if (status != STATUS_OK)
         {
-            print("WARNING: PIT test failed for 333 us interval!\n"
-                  "         This is only critical if very high frame rates (up to 3000 fps)\n"
-                  "         need to be achieved. Otherwise, the error can be safely ignored.\n");
+            print("WARNING: PIT test failed for 333 us interval!\n\r"
+                  "         This is only critical if very high frame rates (up to 3000 fps)\n\r"
+                  "         need to be achieved. Otherwise, the error can be safely ignored.\n\r");
             status = STATUS_IGNORE; // ignore
         }
     }
@@ -1756,7 +1756,7 @@ static status_t PITTest(void)
     status = Timer_SetCallback(0);
     if (status != STATUS_OK)
     {
-        error_log("PIT test failed!\n"
+        error_log("PIT test failed!\n\r"
                   "Timer_SetCallback to 0 returned status code: %d", status);
         return status;
     }
@@ -1820,7 +1820,7 @@ static status_t SpiTransferFromSpiInterruptCallback(status_t status, void * para
 {
     if (param == NULL)
     {
-        error_log("SPI transfer from SPI interrupt test failed\n"
+        error_log("SPI transfer from SPI interrupt test failed\n\r"
                   "callback parameter \"param\" was NULL!");
         return ERROR_INVALID_ARGUMENT;
     }
@@ -1829,7 +1829,7 @@ static status_t SpiTransferFromSpiInterruptCallback(status_t status, void * para
 
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from SPI interrupt test failed:\n"
+        error_log("SPI transfer from SPI interrupt test failed:\n\r"
                   "callback received error! Error code: %d", status);
         data->Status = status;
         return status;
@@ -1837,7 +1837,7 @@ static status_t SpiTransferFromSpiInterruptCallback(status_t status, void * para
 
     if (!data->ReadBack)
     {
-        print("Invoking SPI transfer from SPI interrupt callback...\n");
+        print("Invoking SPI transfer from SPI interrupt callback...\n\r");
 
         /* Clear the laser pattern and read back previous values. */
         data->Data[0] = 0x04; // Laser Pattern Register Address
@@ -1846,7 +1846,7 @@ static status_t SpiTransferFromSpiInterruptCallback(status_t status, void * para
                                     SpiTransferFromSpiInterruptCallback, param);
         if (status != STATUS_OK)
         {
-            error_log("SPI transfer from SPI interrupt test failed:\n"
+            error_log("SPI transfer from SPI interrupt test failed:\n\r"
                       "Calling S2PI_TransferFrame from SPI interrupt "
                       "returned error code: %d", status);
             data->Status = status;
@@ -1894,7 +1894,7 @@ static status_t SpiTransferFromSpiInterrupt(s2pi_slave_t slave)
     status_t status = STATUS_OK;
     spi_irq_data_t data = { .Slave = slave };
 
-    print("Invoking SPI transfer from task level...\n");
+    print("Invoking SPI transfer from task level...\n\r");
 
     /* Transfer a pattern to the register */
     data.Data[0] = 0x04; // Laser Pattern Register Address
@@ -1903,7 +1903,7 @@ static status_t SpiTransferFromSpiInterrupt(s2pi_slave_t slave)
                                 SpiTransferFromSpiInterruptCallback, &data);
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from SPI interrupt test failed:\n"
+        error_log("SPI transfer from SPI interrupt test failed:\n\r"
                   "Failed to transfer a data frame! Error code: %d", status);
         return status;
     }
@@ -1916,8 +1916,8 @@ static status_t SpiTransferFromSpiInterrupt(s2pi_slave_t slave)
         if (Time_CheckTimeoutUSec(&start, timeout_us))
         {
             const uint32_t elapsed_us = Time_GetElapsedUSec(&start);
-            error_log("SPI transfer from SPI interrupt test failed:\n"
-                      "Waiting for the transfers to be finished yielded a timeout.\n"
+            error_log("SPI transfer from SPI interrupt test failed:\n\r"
+                      "Waiting for the transfers to be finished yielded a timeout.\n\r"
                       "Timeout: %d us; Elapsed: %d us (%d of %d events).",
                       timeout_us, elapsed_us);
             status = ERROR_TIMEOUT;
@@ -1927,20 +1927,20 @@ static status_t SpiTransferFromSpiInterrupt(s2pi_slave_t slave)
 
     if (data.Status != STATUS_OK)
     {
-        error_log("SPI transfer from SPI interrupt test failed:\n"
+        error_log("SPI transfer from SPI interrupt test failed:\n\r"
                   "Waiting for the transfers to be finished yielded a error code: %d",
                   data.Status);
         return data.Status;
     }
 
-    print("Verify read data...\n");
+    print("Verify read data...\n\r");
     /* Verify the read pattern. */
     for (uint8_t i = 1; i < 17U; ++i)
     {
         if (data.Data[i] != i)
         {
-            error_log("SPI transfer from SPI interrupt test failed:\n"
-                      "Verification of read data is invalid!\n"
+            error_log("SPI transfer from SPI interrupt test failed:\n\r"
+                      "Verification of read data is invalid!\n\r"
                       "read_data[%d] = %d, but expected was %d",
                       i, data.Data[i], i);
             return ERROR_FAIL;
@@ -1971,12 +1971,12 @@ static void SpiTransferFromGpioInterruptCallback(void * param)
 {
     if (param == NULL)
     {
-        error_log("SPI transfer from GPIO interrupt test failed:\n"
+        error_log("SPI transfer from GPIO interrupt test failed:\n\r"
                   "callback parameter \"param\" was NULL!");
         return;
     }
 
-    print("Invoking SPI transfer from GPIO interrupt callback...\n");
+    print("Invoking SPI transfer from GPIO interrupt callback...\n\r");
 
     /* Clear the laser pattern and read back previous values. */
     spi_irq_data_t * data = (spi_irq_data_t *) param;
@@ -1986,7 +1986,7 @@ static void SpiTransferFromGpioInterruptCallback(void * param)
                                          SpiTransferFromSpiInterruptCallback, param);
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from GPIO interrupt test failed:\n"
+        error_log("SPI transfer from GPIO interrupt test failed:\n\r"
                   "Calling S2PI_TransferFrame from GPIO interrupt "
                   "returned error code: %d", status);
         data->Status = status;
@@ -2028,7 +2028,7 @@ static status_t SpiTransferFromGpioInterrupt(s2pi_slave_t slave)
     status_t status = S2PI_SetIrqCallback(slave, SpiTransferFromGpioInterruptCallback, &data);
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from GPIO interrupt test failed:\n"
+        error_log("SPI transfer from GPIO interrupt test failed:\n\r"
                   "The call to S2PI_SetIrqCallback returned error code: %d", status);
         return status;
     }
@@ -2057,7 +2057,7 @@ static status_t SpiTransferFromGpioInterrupt(s2pi_slave_t slave)
     {
         if (Time_CheckTimeoutMSec(&start, timeout_ms))
         {
-            error_log("SPI transfer from GPIO interrupt test failed:\n"
+            error_log("SPI transfer from GPIO interrupt test failed:\n\r"
                       "The IRQ callback was not invoked within %d ms.",
                       timeout_ms);
             return ERROR_TIMEOUT;
@@ -2066,20 +2066,20 @@ static status_t SpiTransferFromGpioInterrupt(s2pi_slave_t slave)
 
     if (data.Status != STATUS_OK)
     {
-        error_log("SPI transfer from GPIO interrupt test failed:\n"
+        error_log("SPI transfer from GPIO interrupt test failed:\n\r"
                   "Waiting for the transfers to be finished yielded a error code: %d",
                   data.Status);
         return data.Status;
     }
 
-    print("Verify read data...\n");
+    print("Verify read data...\n\r");
     /* Verify the read pattern. */
     for (uint8_t i = 1; i < 17U; ++i)
     {
         if (data.Data[i] != i)
         {
-            error_log("SPI transfer from GPIO interrupt test failed:\n"
-                      "Verification of read data is invalid!\n"
+            error_log("SPI transfer from GPIO interrupt test failed:\n\r"
+                      "Verification of read data is invalid!\n\r"
                       "read_data[%d] = %d, but expected was %d",
                       i, data.Data[i], i);
             return ERROR_FAIL;
@@ -2111,7 +2111,7 @@ static void SpiTransferFromPitInterruptCallback(void * param)
     status_t status = Timer_SetInterval(0, param); // disable timer
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "Timer_SetCallback to 0 returned status code: %d",
                   status);
         if (param != NULL) ((spi_irq_data_t*)param)->Status = status;
@@ -2121,12 +2121,12 @@ static void SpiTransferFromPitInterruptCallback(void * param)
 
     if (param == NULL)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "callback parameter \"param\" was NULL!");
         return;
     }
 
-    print("Invoking SPI transfer from PIT interrupt callback...\n");
+    print("Invoking SPI transfer from PIT interrupt callback...\n\r");
 
     /* Clear the laser pattern and read back previous values. */
     spi_irq_data_t * data = (spi_irq_data_t *) param;
@@ -2136,7 +2136,7 @@ static void SpiTransferFromPitInterruptCallback(void * param)
                                 SpiTransferFromSpiInterruptCallback, param);
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "Calling S2PI_TransferFrame from GPIO interrupt "
                   "returned error code: %d", status);
         data->Status = status;
@@ -2187,7 +2187,7 @@ static status_t SpiTransferFromPitInterrupt(s2pi_slave_t slave)
     if (status == ERROR_NOT_IMPLEMENTED) return status;
     if  (status != STATUS_OK)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "Timer_SetCallback returned status code: %d", status);
         return status;
     }
@@ -2196,7 +2196,7 @@ static status_t SpiTransferFromPitInterrupt(s2pi_slave_t slave)
     status = Timer_SetInterval(interval_us, &data);
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "Timer_SetInterval returned status code: %d", status);
         return status;
     }
@@ -2209,7 +2209,7 @@ static status_t SpiTransferFromPitInterrupt(s2pi_slave_t slave)
     {
         if (Time_CheckTimeoutMSec(&start, timeout_ms))
         {
-            error_log("SPI transfer from PIT interrupt test failed:\n"
+            error_log("SPI transfer from PIT interrupt test failed:\n\r"
                       "The IRQ callback was not invoked within %d ms.",
                       timeout_ms);
             return ERROR_TIMEOUT;
@@ -2218,7 +2218,7 @@ static status_t SpiTransferFromPitInterrupt(s2pi_slave_t slave)
 
     if (data.Status != STATUS_OK)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "Waiting for the transfers to be finished yielded a error code: %d",
                   data.Status);
         return data.Status;
@@ -2227,19 +2227,19 @@ static status_t SpiTransferFromPitInterrupt(s2pi_slave_t slave)
     status = Timer_SetCallback(0);
     if (status != STATUS_OK)
     {
-        error_log("SPI transfer from PIT interrupt test failed:\n"
+        error_log("SPI transfer from PIT interrupt test failed:\n\r"
                   "Timer_SetCallback to 0 returned status code: %d", status);
         return status;
     }
 
-    print("Verify read data...\n");
+    print("Verify read data...\n\r");
     /* Verify the read pattern. */
     for (uint8_t i = 1; i < 17U; ++i)
     {
         if (data.Data[i] != i)
         {
-            error_log("SPI transfer from PIT interrupt test failed:\n"
-                      "Verification of read data is invalid!\n"
+            error_log("SPI transfer from PIT interrupt test failed:\n\r"
+                      "Verification of read data is invalid!\n\r"
                       "read_data[%d] = %d, but expected was %d",
                       i, data.Data[i], i);
             return ERROR_FAIL;
@@ -2283,26 +2283,26 @@ static status_t SpiTransferFromInterruptTest(s2pi_slave_t slave)
 {
     status_t status = STATUS_OK;
 
-    print(" .1 >> SPI Transfer from SPI Interrupt Test\n");
+    print(" .1 >> SPI Transfer from SPI Interrupt Test\n\r");
     status = SpiTransferFromSpiInterrupt(slave);
     if (status != STATUS_OK) return status;
-    print(" .1 >> PASS\n\n");
+    print(" .1 >> PASS\n\n\r");
 
-    print(" .2 >> SPI Transfer from GPIO Interrupt Test\n");
+    print(" .2 >> SPI Transfer from GPIO Interrupt Test\n\r");
     status = SpiTransferFromGpioInterrupt(slave);
     if (status != STATUS_OK) return status;
-    print(" .2 >> PASS\n\n");
+    print(" .2 >> PASS\n\n\r");
 
-    print(" .3 >> SPI Transfer from PIT Interrupt Test\n");
+    print(" .3 >> SPI Transfer from PIT Interrupt Test\n\r");
     status = SpiTransferFromPitInterrupt(slave);
     if (status == ERROR_NOT_IMPLEMENTED)
     {
-        print(" .3 >> SKIPPED (PIT is not implemented)\n\n");
+        print(" .3 >> SKIPPED (PIT is not implemented)\n\n\r");
     }
     else
     {
         if (status != STATUS_OK) return status;
-        print(" .3 >> PASS\n\n");
+        print(" .3 >> PASS\n\n\r");
     }
 
     return STATUS_OK;

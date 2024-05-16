@@ -64,11 +64,11 @@ void HandleError(status_t status, bool stop, char const * msg)
     /* Check for status < 0 and print message and halt the program execution. */
     if (status < STATUS_OK)
     {
-        print("ERROR (%d): %s\n", status, msg);
+        print("ERROR (%d): %s\n\r", status, msg);
         if (stop)
         {
-            print(" --> Stopped execution due to a critical issue!\n"
-                  "     Check the hardware end reset the board!\n");
+            print(" --> Stopped execution due to a critical issue!\n\r"
+                  "     Check the hardware end reset the board!\n\r");
             while (1) __asm("nop"); // stop!
         }
     }
